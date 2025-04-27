@@ -9,11 +9,19 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, AlertTriangle, CheckCircle, Upload } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { kpiData } from "@/data/kpi-data"
+import { FileHandler } from "@/components/file-handler"
+import { exportToJson } from "@/utils/export-utils"
 
 export function ReportAnalyzer() {
   const [reportText, setReportText] = useState("")
+  const [fileName, setFileName] = useState("")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState(null)
+
+  const handleFileContent = (content: string, name: string) => {
+    setReportText(content)
+    setFileName(name)
+  }
 
   const analyzeReport = async () => {
     if (!reportText) return
@@ -21,13 +29,22 @@ export function ReportAnalyzer() {
     setIsAnalyzing(true)
 
     try {
-      // This would use the AI SDK in a real implementation
+      // In a real implementation, we would call the API
+      // const response = await fetch('/api/analyze-report', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ reportText })
+      // });
+      // const data = await response.json();
+      // setAnalysisResult(data);
+
       // For demo purposes, we'll simulate the analysis
       setTimeout(() => {
         // Generate analysis based on the actual KPI data
         const mockAnalysis = {
           misalignments: [],
           summary: "",
+          fileName: fileName || "Unnamed Report",
         }
 
         // Check for mentions of conflicting metrics in the report
@@ -62,32 +79,6 @@ export function ReportAnalyzer() {
         setAnalysisResult(mockAnalysis)
         setIsAnalyzing(false)
       }, 2000)
-
-      // In a real implementation with AI SDK:
-      /*
-      const { text } = await generateText({
-        model: openai("gpt-4o"),
-        prompt: `Analyze this business report for terminology misalignments across departments:
-                ${reportText}
-                
-                Identify terms that might be defined differently across sales, marketing, and product departments.
-                Format your response as JSON with the following structure:
-                {
-                  "misalignments": [
-                    {
-                      "term": "term used",
-                      "context": "how it was used in the report",
-                      "department": "which department perspective this represents",
-                      "issue": "explanation of the potential misalignment",
-                      "severity": "high/medium/low"
-                    }
-                  ],
-                  "summary": "brief summary of findings"
-                }`,
-      });
-      
-      setAnalysisResult(JSON.parse(text));
-      */
     } catch (error) {
       console.error("Error analyzing report:", error)
     } finally {
@@ -118,13 +109,21 @@ export function ReportAnalyzer() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+          <FileHandler onFileContent={handleFileContent} acceptedFileTypes=".txt,.doc,.docx,.pdf,.md,.csv">
             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Drag and drop your report file, or click to browse</p>
             <Button variant="outline" className="mt-2">
               Upload File
             </Button>
-          </div>
+          </FileHandler>
+
+          {fileName && (
+            <Alert variant="outline" className="mt-2">
+              <p className="text-sm">
+                Uploaded: <span className="font-medium">{fileName}</span>
+              </p>
+            </Alert>
+          )}
 
           <div className="space-y-2">
             <Textarea
@@ -195,7 +194,16 @@ export function ReportAnalyzer() {
             </ScrollArea>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline">Export Report</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (analysisResult) {
+                  exportToJson(analysisResult, `analysis-${analysisResult.fileName || "report"}.json`)
+                }
+              }}
+            >
+              Export Report
+            </Button>
             <Button>
               <CheckCircle className="mr-2 h-4 w-4" />
               Add to Glossary

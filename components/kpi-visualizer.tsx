@@ -7,12 +7,34 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { kpiData } from "@/data/kpi-data"
+import { exportToCsv, exportSvg } from "@/utils/export-utils"
 
 export function KpiVisualizer() {
   const [viewType, setViewType] = useState("relationships")
 
   // Get the top conflicting metrics for visualization
   const topConflicts = kpiData.conflictingMetrics.slice(0, 6)
+
+  const handleExportRelationships = () => {
+    exportSvg(".kpi-relationship-svg", "kpi-relationships.svg")
+  }
+
+  const handleExportMetrics = () => {
+    // Format data for CSV export
+    const csvData = kpiData.metricMappings.map((mapping) => ({
+      "Sales KPI": mapping.sales.term,
+      "Sales Definition": mapping.sales.definition,
+      "Marketing KPI": mapping.marketing.term,
+      "Marketing Definition": mapping.marketing.definition,
+      "Product KPI": mapping.product.term,
+      "Product Definition": mapping.product.definition,
+      "Data KPI": mapping.data.term,
+      "Data Definition": mapping.data.definition,
+      "Alignment Status": mapping.alignmentStatus,
+    }))
+
+    exportToCsv(csvData, "kpi-mappings.csv")
+  }
 
   return (
     <div className="space-y-6">
@@ -30,14 +52,14 @@ export function KpiVisualizer() {
 
             <TabsContent value="relationships" className="mt-6">
               <div className="flex justify-end mb-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleExportRelationships}>
                   <Download className="mr-2 h-4 w-4" />
-                  Export
+                  Export SVG
                 </Button>
               </div>
 
               <div className="relative border rounded-lg p-4 h-[500px] overflow-hidden">
-                <svg width="100%" height="100%" viewBox="0 0 800 500" className="mx-auto">
+                <svg width="100%" height="100%" viewBox="0 0 800 500" className="mx-auto kpi-relationship-svg">
                   {/* Teams */}
                   <circle cx="400" cy="100" r="60" fill="#3b82f6" />
                   <text x="400" y="100" textAnchor="middle" fill="white" fontWeight="bold" fontSize="14">
@@ -148,9 +170,9 @@ export function KpiVisualizer() {
 
             <TabsContent value="metrics" className="mt-6">
               <div className="flex justify-end mb-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleExportMetrics}>
                   <Download className="mr-2 h-4 w-4" />
-                  Export
+                  Export CSV
                 </Button>
               </div>
 
