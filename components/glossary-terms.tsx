@@ -23,11 +23,55 @@ export function GlossaryTerms() {
     relatedTerms: [],
   })
 
+  const [editingTerm, setEditingTerm] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState({
+    name: "",
+    team: "",
+    definition: "",
+  })
+
   const filteredGlossary = glossary.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.definition.toLowerCase().includes(searchTerm.toLowerCase()),
   )
+
+  const handleEditClick = (term) => {
+    setEditingTerm(term.id)
+    setEditForm({
+      name: term.name,
+      team: term.team,
+      definition: term.definition,
+    })
+  }
+
+  const handleSaveEdit = () => {
+    if (editForm.name && editForm.definition) {
+      setGlossary(
+        glossary.map((term) =>
+          term.id === editingTerm
+            ? {
+                ...term,
+                name: editForm.name,
+                team: editForm.team,
+                definition: editForm.definition,
+              }
+            : term,
+        ),
+      )
+      setEditingTerm(null)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingTerm(null)
+  }
+
+  const handleDeleteTerm = (id) => {
+    if (confirm("Are you sure you want to delete this term?")) {
+      setGlossary(glossary.filter((term) => term.id !== id))
+    }
+  }
 
   const handleAddTerm = () => {
     if (newTerm.name && newTerm.definition) {
@@ -143,23 +187,74 @@ export function GlossaryTerms() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center">
-                      {item.name}
-                      <Badge className={`ml-2 ${getTeamColor(item.team)}`}>{item.team}</Badge>
-                    </CardTitle>
-                    <CardDescription className="mt-2">{item.definition}</CardDescription>
+                    {editingTerm === item.id ? (
+                      <div className="space-y-2">
+                        <Input
+                          value={editForm.name}
+                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          placeholder="Term name"
+                        />
+                        <Select
+                          value={editForm.team}
+                          onValueChange={(value) => setEditForm({ ...editForm, team: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select team" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="All">All Teams (Standard)</SelectItem>
+                            <SelectItem value="Sales">Sales</SelectItem>
+                            <SelectItem value="Marketing">Marketing</SelectItem>
+                            <SelectItem value="Product">Product</SelectItem>
+                            <SelectItem value="Data">Data</SelectItem>
+                            <SelectItem value="Finance">Finance</SelectItem>
+                            <SelectItem value="Customer Success">Customer Success</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    ) : (
+                      <CardTitle className="flex items-center">
+                        {item.name}
+                        <Badge className={`ml-2 ${getTeamColor(item.team)}`}>{item.team}</Badge>
+                      </CardTitle>
+                    )}
+                    {editingTerm === item.id ? (
+                      <div className="mt-2">
+                        <Textarea
+                          value={editForm.definition}
+                          onChange={(e) => setEditForm({ ...editForm, definition: e.target.value })}
+                          placeholder="Definition"
+                          rows={3}
+                        />
+                      </div>
+                    ) : (
+                      <CardDescription className="mt-2">{item.definition}</CardDescription>
+                    )}
                   </div>
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="ghost">
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {editingTerm === item.id ? (
+                      <>
+                        <Button size="sm" variant="default" onClick={handleSaveEdit}>
+                          Save
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button size="sm" variant="ghost" onClick={() => handleEditClick(item)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleDeleteTerm(item.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </CardHeader>
-              {item.relatedTerms && item.relatedTerms.length > 0 && (
+              {item.relatedTerms && item.relatedTerms.length > 0 && !editingTerm === item.id && (
                 <CardContent>
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Related Terms:</h4>
