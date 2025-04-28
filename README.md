@@ -44,3 +44,9 @@ This Business Glossary & KPI Translator tool helps reconcile terminology and KPI
 
 
 The tool uses the AI SDK with OpenAI integration to analyze reports and detect misalignments between different departmental terminologies, helping teams communicate more effectively and make better-aligned decisions.
+
+
+https://github.com/user-attachments/assets/9e62f6bd-8f2d-4396-a25d-8a9da654cbcd
+
+
+
