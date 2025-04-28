@@ -27,14 +27,14 @@ Continue building your app on:
 
 This Business Glossary & KPI Translator tool helps reconcile terminology and KPIs across departments to improve alignment and decision-making. Here's what it does:
 
-1. **Business Glossary**: Maintains a central repository of terms with their definitions and equivalent terms across departments.
-2. **Report Analyzer**: Uses AI to scan reports and documents for terminology misalignments, flagging potential issues that could lead to miscommunication.
-3. **KPI Visualizer**: Provides visual representations of how terms and metrics relate across departments, making it easier to see connections and potential misalignments.
+1. **Metric Conflicts**: Automatically detects and highlights metrics that have different definitions across teams, and we are categorizing them by severity.(High, Medium and Low). We can filter them based on the severity level.
+2. **Business Glossary**: Maintains a central repository of terms with their definitions and equivalent terms across departments.
+3. **Report Analyzer**: Uses AI to scan reports and documents for terminology misalignments, flagging potential issues that could lead to miscommunication.
+4. **KPI Visualizer**: Provides visual representations of how terms and metrics relate across departments, making it easier to see connections and potential misalignments.
 
 
 ### Key Features
 
-- **Metric Conflicts Dashboard**: A dedicated view showing all metrics with conflicting definitions, sorted by severity
 - **Cross-Department Mapping**: Maps equivalent terms between Sales, Marketing, and Product departments
 - **Misalignment Detection**: Automatically identifies when different departments are using inconsistent terminology
 - **Recommended Resolutions**: Suggests specific ways to resolve each terminology conflict
