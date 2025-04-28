@@ -14,7 +14,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 Your project is live at:
 
-**[https://vercel.com/sudhirrajput593-gmailcoms-projects/v0-business-glossary-tool](https://vercel.com/sudhirrajput593-gmailcoms-projects/v0-business-glossary-tool)**
+**https://v0-business-glossary-tool.vercel.app/**
 
 ## Build your app
 
